@@ -29,7 +29,7 @@ public class MyAI extends CellAI {
          *   GridFunctions.mostCommonNeighbor -> most common neighboring AI
          *   randomInt(bound)            -> reproducible random integer
          */
-
+        Location choice = null;
         int numMyCells = 0;
         int numOtherCells = 0;
         for (int r = 0; r < grid.getRows(); r++) {
@@ -43,12 +43,18 @@ public class MyAI extends CellAI {
             }
         }
 
+        if (numMyCells < numOtherCells){
+            choice = defend(grid, getID());
+        }
+        else {
+            choice = attack(grid, getID());
+        }
 
         return new Location(randomInt(grid.getRows()), randomInt(grid.getCols()));
     }
 
     public static Location defend(Grid grid, int myID) {
-        Location bestLocation = null;
+        Location bestLocation = new Location(randomInt(grid.getRows()), randomInt(grid.getCols()));
         for (int r = 0 ; r < grid.getRows(); r++){
             for (int c = 0 ; c < grid.getCols(); c++){
                 if (grid.getCell(r, c) == -1){
@@ -71,8 +77,8 @@ public class MyAI extends CellAI {
         */
         public static Location attack(Grid grid, int myID) {
             int kills = 0;
-            Location bestLocation = null;
-            for (int r = 0 ; r < grid.getRows(); r++){
+            Location bestLocation = new Location(randomInt(grid.getRows()), randomInt(grid.getCols()));
+            for (int r = grid.getRows() - 1 ; r >= 0; r--){
                 for (int c = 0 ; c < grid.getCols(); c++){
                     if (grid.getCell(r, c) == -1){
                         int neighbors = GridFunctions.getNeighbors(c, r, grid);
@@ -86,7 +92,7 @@ public class MyAI extends CellAI {
                     }
                     
                     
-                    if (grid.getCell(r, c) != myID && grid.getCell(r, c) != -1 && GridFunctions.getNeighbors(c, r, grid) == 3){
+                    if (otherIsAlive(grid, r, c, myID) && GridFunctions.getNeighbors(c, r, grid) == 3){
                         Location free = null;
                         if (grid.getCell(r-1, c) == -1){
                             free = new Location(r-1, c);
@@ -102,11 +108,31 @@ public class MyAI extends CellAI {
                             kills = 4;
                         }
                     }
-                        
+                      
+                    
+                    if(otherIsAlive(grid, r, c, myID)){
+                        if(otherIsAlive(grid, r - 1 , c, myID) && otherIsAlive(grid, r - 2, c, myID) && 
+                        otherIsAlive(grid, r + 4, c, myID) && otherIsAlive(grid, r + 5, c, myID) && otherIsAlive(grid, r + 6, c, myID) &&
+                        otherIsAlive(grid, r + 2, c - 2, myID) && otherIsAlive(grid, r + 2, c - 3, myID) && otherIsAlive(grid, r + 2, c - 4, myID)
+                        && otherIsAlive(grid, r + 2, c + 2, myID) && otherIsAlive(grid, r + 2, c + 3, myID) && otherIsAlive(grid, r + 2, c + 4, myID)){
+                            if(kills < 12){
+                                bestLocation = new Location(r + 2, c);
+                                kills = 12;
+                            }
+
+                        }
+                    }
                         
                 }
             }
             return bestLocation;
+        }
+
+        public static boolean otherIsAlive(Grid grid, int r, int c, int myID){
+            if(grid.getCell(r, c) != -1 && grid.getCell(r, c) != myID){
+                return true;
+            }
+            return false;
         }
 
 }
