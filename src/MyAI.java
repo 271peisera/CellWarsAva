@@ -16,6 +16,7 @@ public class MyAI extends CellAI {
         return "MyAI - CHANGE ME";
     }
 
+    @SuppressWarnings("null")
     @Override
     public Location select(Grid grid) {
         /*
@@ -30,24 +31,65 @@ public class MyAI extends CellAI {
          *   GridFunctions.mostCommonNeighbor -> most common neighboring AI
          *   randomInt(bound)            -> reproducible random integer
          */
-        
+
+        // to prevent an array out of bounds exception, we will only check the 7x7 grid around each cell. If the cell is on the edge, 
+        // we will fill in the missing cells with null values. We will then update the grid 3 times and compare the score of the original grid 
+        // to the score of the updated grid. The score is calculated by counting the number of cells that belong to us and 
+        // subtracting the number of cells that belong to other AIs. We will then choose the location that gives us the highest score.
+        // This doesn't work because it still gives us an array out of bounds exception when we try to update the grid. 
+        // We will need to fix this by checking if the cell is on the edge and filling in the missing cells with null values.
+        Location choice = new Location(0, 0);
         for(int r = 0; r < grid.getRows(); r++){
             for(int c = 0; c < grid.getCols(); c++){
+                int maxScore = 0;
                 int[][] temp = new int[7][7];
+                Grid tempGrid = new Grid(temp);
                 for(int i = 0; i < 7; i++){
                     int row = -3;
                     for(int j = 0; j < 7; j++){
                         int col = -3;
-                        temp[i][j] = grid.getCell(r + row, c + col);
+                        if(r + row >= 0 && r + row < grid.getRows() && c + col >= 0 && c + col < grid.getCols()){
+                            temp[i][j] = grid.getCell(r + row, c + col);
+                        }
+                        else{
+                            // This is where we fill in the missing cells with null values. This will prevent the array out of bounds exception when we update the grid.
+                            // however, this will cause a null pointer exception when we try to update the grid. 
+                            // We will need to fix this by checking if the cell is null before we update the grid.
+                            temp[i][j] = (Integer) null;
+                        }
                         col++;
                     }
                     row++;
                 }
-
+                updateGrid(tempGrid);
+                updateGrid(tempGrid);
+                updateGrid(tempGrid);
+                int scoreSame = scoreKeeper(tempGrid, getID());
+                tempGrid = new Grid(temp);
+                
+                if(grid.getCell(r, c) == -1){
+                    temp[r][c] = getID();
+                    tempGrid = new Grid(temp);
+                }
+                else{
+                    temp[r][c] = -1;
+                    tempGrid = new Grid(temp);
+                }
+                updateGrid(tempGrid);
+                updateGrid(tempGrid);
+                updateGrid(tempGrid);
+                int scoreChanged = scoreKeeper(tempGrid, getID());
+                int score = scoreChanged - scoreSame;
+                if(score > maxScore){
+                    maxScore = score;
+                    if(r >= 0 && r < grid.getRows() && c >= 0 && c < grid.getCols() ){
+                        choice = new Location(r, c);
+                    }
+                }
             }
         }
-
-        
+        System.out.println("MyAI: " + choice);
+        return choice;
 
         /*Location choice = null;
         int numMyCells = 0;
@@ -76,34 +118,51 @@ public class MyAI extends CellAI {
 
     }
 
-    
-    public static void updateGrid(Grid grid){
-            boolean[][] newSociety = new boolean[grid.getRows()][grid.getCols()];
+    public static Grid updateGrid(Grid grid){
+            int[][] newSociety = new int[grid.getRows()][grid.getCols()];
             for(int r = 0; r < newSociety.length; r++) {
                 for(int c = 0; c < newSociety[0].length; c++){
-                    int numNeighbors = neighborCount(r, c);
-                    if (society[r][c]) {
+                    int numNeighbors =  GridFunctions.getNeighbors(c, r, grid);
+                    if(grid.getCell(r, c) == null){
+                        newSociety[r][c] = null;
+                    }
+                    else{
+                    if (grid.getCell(r, c) != -1) {
                         if(numNeighbors >= 2 && numNeighbors <= 3){
-                            newSociety[r][c] = true;
+                            newSociety[r][c] = grid.getCell(r, c);
                         }
                         else{
-                            newSociety[r][c] = false;
+                            newSociety[r][c] = -1;
                         }
 
                     }
                     else {
                         if(numNeighbors == 3){
-                            newSociety[r][c] = true;
+                            newSociety[r][c] = GridFunctions.mostCommonNeighbor(c, r, grid);
                         }
                         else{
-                            newSociety[r][c] = false;
+                            newSociety[r][c] = -1;
                         }
                     }
 
                     }
                 }
-            
-            society = newSociety;
+            return new Grid(newSociety);
+        }
+
+        public static int scoreKeeper(Grid grid, int myID){
+            int score = 0;
+            for(int r = 0; r < grid.getRows(); r++){
+                for(int c = 0; c < grid.getCols(); c++){
+                    if(grid.getCell(r, c) == myID){
+                        score++;
+                    }
+                    if(grid.getCell(r, c) != -1 && grid.getCell(r, c) != myID){
+                        score--;
+                    }
+                }
+            }
+            return score;
         }
     
     
