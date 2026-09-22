@@ -5,7 +5,8 @@
  * AI Code Name: ______________________
  *
  * Strategy Description:
- * Replace this comment with a short explanation of the strategy your AI uses.
+ * First Strat commented out
+ * Second in progress
  * Your final strategy must be fundamentally different from the sample AIs.
  */
 public class MyAI extends CellAI {
@@ -29,7 +30,26 @@ public class MyAI extends CellAI {
          *   GridFunctions.mostCommonNeighbor -> most common neighboring AI
          *   randomInt(bound)            -> reproducible random integer
          */
-        Location choice = null;
+        
+        for(int r = 0; r < grid.getRows(); r++){
+            for(int c = 0; c < grid.getCols(); c++){
+                int[][] temp = new int[7][7];
+                for(int i = 0; i < 7; i++){
+                    int row = -3;
+                    for(int j = 0; j < 7; j++){
+                        int col = -3;
+                        temp[i][j] = grid.getCell(r + row, c + col);
+                        col++;
+                    }
+                    row++;
+                }
+
+            }
+        }
+
+        
+
+        /*Location choice = null;
         int numMyCells = 0;
         int numOtherCells = 0;
         for (int r = 0; r < grid.getRows(); r++) {
@@ -51,8 +71,50 @@ public class MyAI extends CellAI {
         }
 
         return new Location(randomInt(grid.getRows()), randomInt(grid.getCols()));
+        */
+
+
     }
 
+    
+    public static void updateGrid(Grid grid){
+            boolean[][] newSociety = new boolean[grid.getRows()][grid.getCols()];
+            for(int r = 0; r < newSociety.length; r++) {
+                for(int c = 0; c < newSociety[0].length; c++){
+                    int numNeighbors = neighborCount(r, c);
+                    if (society[r][c]) {
+                        if(numNeighbors >= 2 && numNeighbors <= 3){
+                            newSociety[r][c] = true;
+                        }
+                        else{
+                            newSociety[r][c] = false;
+                        }
+
+                    }
+                    else {
+                        if(numNeighbors == 3){
+                            newSociety[r][c] = true;
+                        }
+                        else{
+                            newSociety[r][c] = false;
+                        }
+                    }
+
+                    }
+                }
+            
+            society = newSociety;
+        }
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    /* 
     public static Location defend(Grid grid, int myID) {
         Location bestLocation = new Location(randomInt(grid.getRows()), randomInt(grid.getCols()));
         for (int r = 0 ; r < grid.getRows(); r++){
@@ -75,6 +137,7 @@ public class MyAI extends CellAI {
         This method is a sample implementation of an attack strategy. It looks for empty cells that have exactly 2 neighbors, 
         and if the most common neighbor is not the AI's own ID, it selects that location as a potential attack move.
         */
+        /* 
         public static Location attack(Grid grid, int myID) {
             int kills = 0;
             Location bestLocation = new Location(randomInt(grid.getRows()), randomInt(grid.getCols()));
@@ -134,5 +197,6 @@ public class MyAI extends CellAI {
             }
             return false;
         }
+        */
 
 }
