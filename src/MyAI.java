@@ -43,11 +43,11 @@ public class MyAI extends CellAI {
             for(int c = 0; c < grid.getCols(); c++){
                 int maxScore = 0;
                 int[][] temp = new int[7][7];
-                Grid tempGrid = new Grid(temp);
+                int row = -3;
+                
                 for(int i = 0; i < 7; i++){
-                    int row = -3;
+                    int col = -3;
                     for(int j = 0; j < 7; j++){
-                        int col = -3;
                         if(r + row >= 0 && r + row < grid.getRows() && c + col >= 0 && c + col < grid.getCols()){
                             temp[i][j] = grid.getCell(r + row, c + col);
                         }
@@ -55,29 +55,30 @@ public class MyAI extends CellAI {
                             // This is where we fill in the missing cells with null values. This will prevent the array out of bounds exception when we update the grid.
                             // however, this will cause a null pointer exception when we try to update the grid. 
                             // We will need to fix this by checking if the cell is null before we update the grid.
-                            temp[i][j] = (Integer) null;
+                            temp[i][j] = -1;
                         }
                         col++;
                     }
                     row++;
                 }
-                updateGrid(tempGrid);
-                updateGrid(tempGrid);
-                updateGrid(tempGrid);
+                Grid tempGrid = new Grid(temp);
+                tempGrid = updateGrid(tempGrid);
+                tempGrid = updateGrid(tempGrid);
+                tempGrid = updateGrid(tempGrid);
                 int scoreSame = scoreKeeper(tempGrid, getID());
                 tempGrid = new Grid(temp);
                 
                 if(grid.getCell(r, c) == -1){
-                    temp[r][c] = getID();
+                    temp[3][3] = getID();
                     tempGrid = new Grid(temp);
                 }
                 else{
-                    temp[r][c] = -1;
+                    temp[3][3] = -1;
                     tempGrid = new Grid(temp);
                 }
-                updateGrid(tempGrid);
-                updateGrid(tempGrid);
-                updateGrid(tempGrid);
+                tempGrid = updateGrid(tempGrid);
+                tempGrid = updateGrid(tempGrid);
+                tempGrid = updateGrid(tempGrid);
                 int scoreChanged = scoreKeeper(tempGrid, getID());
                 int score = scoreChanged - scoreSame;
                 if(score > maxScore){
@@ -122,11 +123,7 @@ public class MyAI extends CellAI {
             int[][] newSociety = new int[grid.getRows()][grid.getCols()];
             for(int r = 0; r < newSociety.length; r++) {
                 for(int c = 0; c < newSociety[0].length; c++){
-                    int numNeighbors =  GridFunctions.getNeighbors(c, r, grid);
-                    if(grid.getCell(r, c) == null){
-                        newSociety[r][c] = null;
-                    }
-                    else{
+                    int numNeighbors =  GridFunctions.getNeighbors(r, c, grid);
                     if (grid.getCell(r, c) != -1) {
                         if(numNeighbors >= 2 && numNeighbors <= 3){
                             newSociety[r][c] = grid.getCell(r, c);
@@ -134,21 +131,19 @@ public class MyAI extends CellAI {
                         else{
                             newSociety[r][c] = -1;
                         }
-
-                    }
-                    else {
+                    } else {
                         if(numNeighbors == 3){
-                            newSociety[r][c] = GridFunctions.mostCommonNeighbor(c, r, grid);
+                            newSociety[r][c] = GridFunctions.mostCommonNeighbor(r, c, grid);
                         }
                         else{
                             newSociety[r][c] = -1;
                         }
                     }
-
-                    }
                 }
-            return new Grid(newSociety);
+            
         }
+        return new Grid(newSociety);
+    }
 
         public static int scoreKeeper(Grid grid, int myID){
             int score = 0;
@@ -179,9 +174,9 @@ public class MyAI extends CellAI {
         for (int r = 0 ; r < grid.getRows(); r++){
             for (int c = 0 ; c < grid.getCols(); c++){
                 if (grid.getCell(r, c) == -1){
-                    int neighbors = GridFunctions.getNeighbors(c, r, grid);
+                    int neighbors = GridFunctions.getNeighbors(r, c, grid);
                     if (neighbors == 2){
-                        int mostCommon = GridFunctions.mostCommonNeighbor(c, r, grid);
+                        int mostCommon = GridFunctions.mostCommonNeighbor(r, c, grid);
                         if (mostCommon == myID){
                             bestLocation = new Location(r, c);                                                                         
                         }
