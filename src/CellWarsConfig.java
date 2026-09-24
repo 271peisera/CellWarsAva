@@ -6,7 +6,7 @@ public final class CellWarsConfig {
 
     public static final int STARTING_CELLS_PER_AI = 100;
     public static final int SIZE_MULTIPLIER = 1000;
-    public static final int MAX_TURNS = 10_000;
+    public static final int MAX_TURNS = 1000;
 
     public static final int DEFAULT_TOURNAMENT_RUNS = 10;
     public static final long DEFAULT_BASE_SEED = 20260911L;

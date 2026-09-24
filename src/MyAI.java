@@ -1,19 +1,21 @@
 /**
  * STUDENT FILE
  *
- * Name: ______________________________
- * AI Code Name: ______________________
+ * Name: Ava Peiser
+ * AI Code Name: GA3
  *
  * Strategy Description:
- * First Strat commented out
- * Second in progress
- * Your final strategy must be fundamentally different from the sample AIs.
+ * My strategy involves evaluating the potential score of each possible move by simulating the grid updates and comparing the scores. 
+ * I choose the move that maximizes the difference between the score after the move and the score before the move.
+ * First, I create a temporary 7x7 grid around each cell to simulate the local environment.
+ * Then, I update this temporary grid three times to allow the effects of the move to show.
+ * Finally, I calculate the score difference between the original and updated grids to determine the best move.
  */
 public class MyAI extends CellAI {
 
     @Override
     public String getAIName() {
-        return "MyAI - CHANGE ME";
+        return "GA3";
     }
 
     @SuppressWarnings("null")
@@ -32,16 +34,11 @@ public class MyAI extends CellAI {
          *   randomInt(bound)            -> reproducible random integer
          */
 
-        // to prevent an array out of bounds exception, we will only check the 7x7 grid around each cell. If the cell is on the edge, 
-        // we will fill in the missing cells with null values. We will then update the grid 3 times and compare the score of the original grid 
-        // to the score of the updated grid. The score is calculated by counting the number of cells that belong to us and 
-        // subtracting the number of cells that belong to other AIs. We will then choose the location that gives us the highest score.
-        // This doesn't work because it still gives us an array out of bounds exception when we try to update the grid. 
-        // We will need to fix this by checking if the cell is on the edge and filling in the missing cells with null values.
+        
         Location choice = new Location(0, 0);
+        int maxScore = 0;
         for(int r = 0; r < grid.getRows(); r++){
             for(int c = 0; c < grid.getCols(); c++){
-                int maxScore = 0;
                 int[][] temp = new int[7][7];
                 int row = -3;
                 
