@@ -49,9 +49,6 @@ public class MyAI extends CellAI {
                             temp[i][j] = grid.getCell(r + row, c + col);
                         }
                         else{
-                            // This is where we fill in the missing cells with null values. This will prevent the array out of bounds exception when we update the grid.
-                            // however, this will cause a null pointer exception when we try to update the grid. 
-                            // We will need to fix this by checking if the cell is null before we update the grid.
                             temp[i][j] = -1;
                         }
                         col++;
@@ -88,30 +85,6 @@ public class MyAI extends CellAI {
         }
         System.out.println("MyAI: " + choice);
         return choice;
-
-        /*Location choice = null;
-        int numMyCells = 0;
-        int numOtherCells = 0;
-        for (int r = 0; r < grid.getRows(); r++) {
-            for (int c = 0; c < grid.getCols(); c++) {
-                int cellID = grid.getCell(r, c);
-                if (cellID == getID()) {
-                    numMyCells++;
-                } else if (cellID != -1) {
-                    numOtherCells++;
-                }
-            }
-        }
-
-        if (numMyCells < numOtherCells){
-            choice = defend(grid, getID());
-        }
-        else {
-            choice = attack(grid, getID());
-        }
-
-        return new Location(randomInt(grid.getRows()), randomInt(grid.getCols()));
-        */
 
 
     }
@@ -157,91 +130,6 @@ public class MyAI extends CellAI {
             return score;
         }
     
-    
-    
-    
-    
-    
-    
-    
-    
-    /* 
-    public static Location defend(Grid grid, int myID) {
-        Location bestLocation = new Location(randomInt(grid.getRows()), randomInt(grid.getCols()));
-        for (int r = 0 ; r < grid.getRows(); r++){
-            for (int c = 0 ; c < grid.getCols(); c++){
-                if (grid.getCell(r, c) == -1){
-                    int neighbors = GridFunctions.getNeighbors(r, c, grid);
-                    if (neighbors == 2){
-                        int mostCommon = GridFunctions.mostCommonNeighbor(r, c, grid);
-                        if (mostCommon == myID){
-                            bestLocation = new Location(r, c);                                                                         
-                        }
-                    }
-                    }
-                }
-            }
-            return bestLocation;
-        }
-
-        /*
-        This method is a sample implementation of an attack strategy. It looks for empty cells that have exactly 2 neighbors, 
-        and if the most common neighbor is not the AI's own ID, it selects that location as a potential attack move.
-        */
-        /* 
-        public static Location attack(Grid grid, int myID) {
-            int kills = 0;
-            Location bestLocation = new Location(randomInt(grid.getRows()), randomInt(grid.getCols()));
-            for (int r = grid.getRows() - 1 ; r >= 0; r--){
-                for (int c = 0 ; c < grid.getCols(); c++){
-                    if (grid.getCell(r, c) == -1){
-                        int neighbors = GridFunctions.getNeighbors(c, r, grid);
-                        if (neighbors == 2){
-                            int mostCommon = GridFunctions.mostCommonNeighbor(c, r, grid);
-                            if (mostCommon != myID && mostCommon != -1 && kills < 2){
-                                bestLocation = new Location(r, c);
-                                kills = 2;                                                                         
-                            }
-                        }
-                    }
-                    
-                    
-                    if (otherIsAlive(grid, r, c, myID) && GridFunctions.getNeighbors(c, r, grid) == 3){
-                        Location free = null;
-                        if (grid.getCell(r-1, c) == -1){
-                            free = new Location(r-1, c);
-                        } else if (grid.getCell(r+1, c) == -1){
-                            free = new Location(r+1, c);
-                        } else if (grid.getCell(r, c-1) == -1){
-                            free = new Location(r, c-1);
-                        } else if (grid.getCell(r, c+1) == -1){
-                            free = new Location(r, c+1);
-                        }
-                        if(kills < 4 && free != null){
-                            bestLocation = free;
-                            kills = 4;
-                        }
-                    }
-                      
-                    
-                    if(otherIsAlive(grid, r, c, myID)){
-                        if(otherIsAlive(grid, r - 1 , c, myID) && otherIsAlive(grid, r - 2, c, myID) && 
-                        otherIsAlive(grid, r + 4, c, myID) && otherIsAlive(grid, r + 5, c, myID) && otherIsAlive(grid, r + 6, c, myID) &&
-                        otherIsAlive(grid, r + 2, c - 2, myID) && otherIsAlive(grid, r + 2, c - 3, myID) && otherIsAlive(grid, r + 2, c - 4, myID)
-                        && otherIsAlive(grid, r + 2, c + 2, myID) && otherIsAlive(grid, r + 2, c + 3, myID) && otherIsAlive(grid, r + 2, c + 4, myID)){
-                            if(kills < 12){
-                                bestLocation = new Location(r + 2, c);
-                                kills = 12;
-                            }
-
-                        }
-                    }
-                        
-                }
-            }
-            return bestLocation;
-        }
-
         public static boolean otherIsAlive(Grid grid, int r, int c, int myID){
             if(grid.getCell(r, c) != -1 && grid.getCell(r, c) != myID){
                 return true;
