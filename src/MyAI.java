@@ -83,7 +83,6 @@ public class MyAI extends CellAI {
                 }
             }
         }
-        System.out.println("MyAI: " + choice);
         return choice;
 
 
